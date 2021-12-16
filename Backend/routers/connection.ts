@@ -41,8 +41,10 @@ connectionRouter.get("/info/:username", async (_req, res) => {
     const user: UserItemGet = await User.findOne({
       username: _req.params.username,
     });
-    console.log(user);
-    res.status(200).json(user);
+
+    res
+      .status(200)
+      .json({ username: user.username, twoFactorAuth: user.twoFactorAuth });
   } catch (error) {
     res.status(500).json({ error: error });
   }

@@ -5,20 +5,19 @@ import { useLocation } from "react-router-dom";
 export default function Dashboard() {
   const { state } = useLocation();
   const { username, twoFactorAuth } = state;
+  const [note, setChecked] = useState("checked");
 
-  window.addEventListener("load", () => {
+  const checkedButton = () => {
     const connecedUser = document.getElementById("connectedUser")?.innerText;
-    fetch(`http://localhost:3001/users/info/${connecedUser}`, {
-      method: "GET",
-      headers: {},
-    })
+    fetch(`http://localhost:3001/users/info/${connecedUser}`)
       .then((response) => response.json())
       .then((data) => {
         data.twoFactorAuth
-          ? document.getElementById("checkbox")?.setAttribute("check", "true")
-          : document.getElementById("checkbox")?.setAttribute("check", "false");
-      });
-  });
+          ? document.getElementById("checkbox")?.setAttribute("checked", "true")
+          : document.getElementById("checkbox")?.removeAttribute("checked");
+      })
+      .catch((err) => {});
+  };
 
   const toggleOnTFA = () => {
     const connecedUser = document.getElementById("connectedUser")?.innerText;
@@ -29,9 +28,10 @@ export default function Dashboard() {
     })
       .then((response) => response.json())
       .then((data) => {
-        data.twoFactorAuth
-          ? document.getElementById("checkbox")?.setAttribute("check", "true")
-          : document.getElementById("checkbox")?.setAttribute("check", "false");
+        console.log(data);
+        // data.twoFactorAuth
+        //   ? document.getElementById("checkbox")?.setAttribute("checked", "true")
+        //   : document.getElementById("checkbox")?.removeAttribute("checked");
       })
       .catch((err) => {
         alert("server error");
@@ -52,7 +52,9 @@ export default function Dashboard() {
         type="checkbox"
         name="factorAuth"
         onChange={() => {
+          console.log("hey");
           toggleOnTFA();
+          checkedButton();
         }}
       />
       <br />
