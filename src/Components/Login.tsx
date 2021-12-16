@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { handleLocalStorage } from "../Helpers/helper";
+import { handleLocalStorage, AddMinutesToDate } from "../Helpers/helper";
 import { returnedLogin } from "../Types/types";
+import { useNavigate } from "react-router";
 
 export default function Login({ setHasToken }: { setHasToken: any }) {
+  let navigate = useNavigate();
   const userLogin = () => {
     const form: HTMLFormElement = document.querySelector("#loginForm")!;
     const formData = new FormData(form);
-
     fetch("http://localhost:3001/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -17,8 +18,20 @@ export default function Login({ setHasToken }: { setHasToken: any }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        handleLocalStorage(data.token);
-        setHasToken(data.token);
+        if (data.twoFactorAuth) {
+          navigate("/auth", {
+            state: { username: data.username, qr: data.qr },
+          });
+        } else {
+          setHasToken(data.token);
+          handleLocalStorage(data.token);
+          navigate("/", {
+            state: {
+              username: data.username,
+              twoFactorAuth: data.twoFactorAuth,
+            },
+          });
+        }
       })
       .catch((error) => {
         console.error("Error:", error);

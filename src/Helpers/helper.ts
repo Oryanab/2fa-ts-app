@@ -15,8 +15,8 @@ export const getCookie = (cname: string): string => {
 };
 
 export const handleLocalStorage = (token: string) => {
-  let date = new Date();
-  let inFiveMinutes = date.setTime(date.getTime() + 5 * 60 * 1000);
+  const now = new Date();
+  let inFiveMinutes = AddMinutesToDate(now, 5);
   document.cookie = `token=${token}; expires=${inFiveMinutes}`;
 };
 
@@ -28,4 +28,8 @@ export const deleteAllCookies = () => {
     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
+};
+
+export const AddMinutesToDate = (date: Date, minutes: any) => {
+  return new Date(date.getTime() + minutes * 60000);
 };

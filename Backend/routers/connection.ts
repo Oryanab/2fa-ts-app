@@ -47,7 +47,7 @@ connectionRouter.post("/signup", async (_req, res) => {
       secret: "inital key",
     });
     const savedUser = await userObj.save();
-    res.status(200).json(savedUser);
+    res.status(200).json({ success: true });
   } catch (error) {
     res
       .status(403)
@@ -108,7 +108,7 @@ connectionRouter.patch("/two-factor-auth/:username", async (_req, res) => {
       await User.update({ _id: currentUser["_id"] }, { $set: { qr: qr } });
     }
     res.status(200).json({
-      message: "success twoFactorAuth: " + !currentUser.twoFactorAuth,
+      twoFactorAuth: !currentUser.twoFactorAuth,
     });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -119,8 +119,19 @@ connectionRouter.post("/authenticate", async (_req, res) => {
   try {
     const currentUser = await User.findOne({ username: _req.body.username });
     const { delta } = twofactor.verifyToken(currentUser.secret, _req.body.code);
+    const accessToken = jwt.sign(
+      { email: _req.body.email, username: currentUser.username },
+      process.env.SECRET!,
+      {
+        expiresIn: "10m",
+      }
+    );
     if (delta === 0) {
-      res.status(200).json({ message: "success" });
+      res.status(200).json({
+        message: "success",
+        token: accessToken,
+        twoFactorAuth: currentUser.twoFactorAuth,
+      });
     } else {
       res.status(400).json({ message: "wrong Number" });
     }

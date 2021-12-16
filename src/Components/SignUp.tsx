@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export default function SignUp() {
+  let navigate = useNavigate();
+  const userSignUp = () => {
+    const form: HTMLFormElement = document.querySelector("#signupForm")!;
+    const formData = new FormData(form);
+    fetch("http://localhost:3001/users/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: formData.get("username") as string,
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        navigate("/");
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
   return (
     <div className="proper-div">
       <h1>Sign-Up Section</h1>
@@ -9,7 +31,7 @@ export default function SignUp() {
         Hello, welcome to the 2FA project im made, if you have an account ,
         Login
       </p>
-      <form>
+      <form id="signupForm">
         <label htmlFor="username">Enter Your Username: </label>
         <input type="text" name="username" />
         <br />
