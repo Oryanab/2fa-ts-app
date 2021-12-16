@@ -6,37 +6,37 @@ import { Link } from "react-router-dom";
 
 export default function Login({ setHasToken }: { setHasToken: any }) {
   let navigate = useNavigate();
-  const userLogin = () => {
+  const userLogin = async () => {
     const form: HTMLFormElement = document.querySelector("#loginForm")!;
     const formData = new FormData(form);
-    fetch("http://localhost:3001/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.twoFactorAuth) {
-          navigate("/auth", {
-            state: { username: data.username, qr: data.qr },
-          });
-        } else {
-          setHasToken(data.token);
-          handleLocalStorage(data.token);
-          navigate("/", {
-            state: {
-              username: data.username,
-              twoFactorAuth: data.twoFactorAuth,
-            },
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+
+    try {
+      const loggedUser = await fetch("http://localhost:3001/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.get("email") as string,
+          password: formData.get("password") as string,
+        }),
       });
+      const loggedUserJson = await loggedUser.json();
+      if (loggedUserJson.twoFactorAuth === true) {
+        navigate("/auth", {
+          state: { username: loggedUserJson.username, qr: loggedUserJson.qr },
+        });
+      } else {
+        setHasToken(loggedUserJson.token);
+        handleLocalStorage(loggedUserJson.token);
+        navigate("/", {
+          state: {
+            username: loggedUserJson.username,
+            twoFactorAuth: loggedUserJson.twoFactorAuth,
+          },
+        });
+      }
+    } catch (err) {
+      console.log("Error:", err);
+    }
   };
 
   return (
@@ -55,13 +55,13 @@ export default function Login({ setHasToken }: { setHasToken: any }) {
         <input id="password" type="text" name="password" />
         <br />
         <button
-          onClick={(e) => {
-            e.preventDefault();
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
             userLogin();
             document.getElementById("email")!.innerText = "";
             document.getElementById("password")!.innerText = "";
           }}
-          type="submit"
         >
           submit
         </button>

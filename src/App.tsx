@@ -9,13 +9,20 @@ import { getCookie } from "./Helpers/helper";
 function App() {
   const [hasToken, setHasToken] = useState("");
 
-  window.addEventListener("load", () => {
+  useEffect(() => {
     try {
       setHasToken(getCookie("token"));
     } catch (err) {
       setHasToken("");
     }
-  });
+  }, []);
+  // window.addEventListener("load", () => {
+  //   try {
+  //     setHasToken(getCookie("token"));
+  //   } catch (err) {
+  //     setHasToken("");
+  //   }
+  // });
 
   return (
     <BrowserRouter>

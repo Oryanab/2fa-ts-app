@@ -43,5 +43,5 @@ POST http://localhost:3001/users/verify
 Content-Type: application/json
 
 {
-    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2Mzk2MTU3MTUsImV4cCI6MTYzOTYxNjMxNX0.ZnfJI8S12E6cb_JOPNbRjs1UJZQhL3Te1tCcAXdhiBg"
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2Mzk2Njc4NDIsImV4cCI6MTYzOTY2ODE0Mn0._aO1yE6j2OzioC5jRifvbfKEDWr5Yao7FBCEnk9Ug08"
 }

@@ -33,3 +33,11 @@ export const deleteAllCookies = () => {
 export const AddMinutesToDate = (date: Date, minutes: any) => {
   return new Date(date.getTime() + minutes * 60000);
 };
+
+export const delete_cookie = (name: string) => {
+  document.cookie =
+    name +
+    "=; Path=/;  Domain=" +
+    "/" +
+    "; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure";
+};

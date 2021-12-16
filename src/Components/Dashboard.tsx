@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
+import { deleteAllCookies, delete_cookie } from "../Helpers/helper";
 
 export default function Dashboard() {
+  let navigate = useNavigate();
   const { state } = useLocation();
   const { username, twoFactorAuth } = state;
-  const [note, setChecked] = useState("checked");
+  const [checked, setChecked] = React.useState(false);
 
-  const checkedButton = () => {
+  useEffect(() => {
     const connecedUser = document.getElementById("connectedUser")?.innerText;
     fetch(`http://localhost:3001/users/info/${connecedUser}`)
       .then((response) => response.json())
       .then((data) => {
-        data.twoFactorAuth
-          ? document.getElementById("checkbox")?.setAttribute("checked", "true")
-          : document.getElementById("checkbox")?.removeAttribute("checked");
+        data.twoFactorAuth === true ? setChecked(true) : setChecked(false);
       })
       .catch((err) => {});
-  };
+  }, []);
 
   const toggleOnTFA = () => {
     const connecedUser = document.getElementById("connectedUser")?.innerText;
@@ -29,9 +29,7 @@ export default function Dashboard() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        // data.twoFactorAuth
-        //   ? document.getElementById("checkbox")?.setAttribute("checked", "true")
-        //   : document.getElementById("checkbox")?.removeAttribute("checked");
+        data.twoFactorAuth === true ? setChecked(true) : setChecked(false);
       })
       .catch((err) => {
         alert("server error");
@@ -50,18 +48,25 @@ export default function Dashboard() {
       <input
         id="checkbox"
         type="checkbox"
+        checked={checked}
         name="factorAuth"
         onChange={() => {
-          console.log("hey");
           toggleOnTFA();
-          checkedButton();
         }}
       />
       <br />
       <br />
       <br />
       <br />
-      <button id="logout" type="button">
+      <button
+        onClick={(e) => {
+          //e.preventDefault();
+          delete_cookie("token");
+          navigate("/");
+        }}
+        id="logout"
+        type="button"
+      >
         Logout
       </button>
     </div>

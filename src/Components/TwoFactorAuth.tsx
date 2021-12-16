@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { handleLocalStorage } from "../Helpers/helper";
+import { handleLocalStorage, deleteAllCookies } from "../Helpers/helper";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 
@@ -29,6 +29,7 @@ export default function TwoFactorAuth({ setHasToken }: { setHasToken: any }) {
       })
       .catch((err) => {
         alert("wrong Code");
+        deleteAllCookies();
       });
   };
   return (
