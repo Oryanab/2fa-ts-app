@@ -3,7 +3,7 @@ import { handleLocalStorage } from "../Helpers/helper";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 
-export default function TwoFactorAuth() {
+export default function TwoFactorAuth({ setHasToken }: { setHasToken: any }) {
   let navigate = useNavigate();
   const { state } = useLocation();
   const { username, token, qr } = state;
@@ -22,8 +22,9 @@ export default function TwoFactorAuth() {
       .then((response) => response.json())
       .then((data) => {
         handleLocalStorage(data.token);
+        setHasToken(data.token);
         navigate("/", {
-          state: { username: data.username, twoFactorAuth: data.twoFactorAuth },
+          state: { username: username, twoFactorAuth: data.twoFactorAuth },
         });
       })
       .catch((err) => {
@@ -43,8 +44,8 @@ export default function TwoFactorAuth() {
         <input type="number" name="code" />
         <br />
         <button
-          onSubmit={(event) => {
-            event.preventDefault();
+          onClick={(e) => {
+            e.preventDefault();
             userSubmitCode();
           }}
           type="submit"

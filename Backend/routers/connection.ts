@@ -1,7 +1,7 @@
 import express, { NextFunction } from "express";
 const connectionRouter = express.Router();
 import User from "../data/userSchema";
-import { UserItem, RequestsUserItem } from "../Types/backendTypes";
+import { UserItem, RequestsUserItem, UserItemGet } from "../Types/backendTypes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const twofactor = require("node-2fa");
@@ -31,6 +31,18 @@ connectionRouter.get("/", async (_req, res) => {
   try {
     const allUsers: UserItem[] = await User.find({});
     res.status(200).json(allUsers);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+connectionRouter.get("/info/:username", async (_req, res) => {
+  try {
+    const user: UserItemGet = await User.findOne({
+      username: _req.params.username,
+    });
+    console.log(user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -67,7 +79,7 @@ connectionRouter.post("/login", validateUserExist, async (_req, res) => {
         { email: _req.body.email, username: currentUser.username },
         process.env.SECRET!,
         {
-          expiresIn: "10m",
+          expiresIn: "5m",
         }
       );
       if (currentUser.twoFactorAuth) {
@@ -99,6 +111,7 @@ connectionRouter.patch("/two-factor-auth/:username", async (_req, res) => {
       { username: _req.params.username },
       [{ $set: { twoFactorAuth: { $not: "$twoFactorAuth" } } }]
     );
+
     if (!currentUser.twoFactorAuth === true) {
       const { secret, uri, qr } = ganerateNewSecret(currentUser.username);
       await User.update(
@@ -123,7 +136,7 @@ connectionRouter.post("/authenticate", async (_req, res) => {
       { email: _req.body.email, username: currentUser.username },
       process.env.SECRET!,
       {
-        expiresIn: "10m",
+        expiresIn: "5m",
       }
     );
     if (delta === 0) {

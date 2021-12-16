@@ -6,18 +6,32 @@ export default function Dashboard() {
   const { state } = useLocation();
   const { username, twoFactorAuth } = state;
 
-  let checkBox: any = document.getElementsByName("checkbox");
-  checkBox.checked = twoFactorAuth;
+  window.addEventListener("load", () => {
+    const connecedUser = document.getElementById("connectedUser")?.innerText;
+    fetch(`http://localhost:3001/users/info/${connecedUser}`, {
+      method: "GET",
+      headers: {},
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.twoFactorAuth
+          ? document.getElementById("checkbox")?.setAttribute("check", "true")
+          : document.getElementById("checkbox")?.setAttribute("check", "false");
+      });
+  });
 
   const toggleOnTFA = () => {
-    fetch(`http://localhost:3001/users/two-factor-auth/${username}`, {
+    const connecedUser = document.getElementById("connectedUser")?.innerText;
+    fetch(`http://localhost:3001/users/two-factor-auth/${connecedUser}`, {
       method: "PATCH",
       headers: {},
       body: JSON.stringify({}),
     })
       .then((response) => response.json())
       .then((data) => {
-        checkBox.checked = data.twoFactorAuth;
+        data.twoFactorAuth
+          ? document.getElementById("checkbox")?.setAttribute("check", "true")
+          : document.getElementById("checkbox")?.setAttribute("check", "false");
       })
       .catch((err) => {
         alert("server error");
@@ -28,7 +42,9 @@ export default function Dashboard() {
     <div className="proper-div">
       <h1>Dashboard Section</h1>
       <br />
-      <h2>{`Hello, ${username}`}</h2>
+      <h2>
+        Hello <span id="connectedUser">{username}</span>
+      </h2>
       <p>Hello, welcome to the 2FA project im made the service available?</p>
       <label htmlFor="factorAuth"> I Want 2FA: </label>
       <input
@@ -39,6 +55,13 @@ export default function Dashboard() {
           toggleOnTFA();
         }}
       />
+      <br />
+      <br />
+      <br />
+      <br />
+      <button id="logout" type="button">
+        Logout
+      </button>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { handleLocalStorage, AddMinutesToDate } from "../Helpers/helper";
 import { returnedLogin } from "../Types/types";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function Login({ setHasToken }: { setHasToken: any }) {
   let navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Login({ setHasToken }: { setHasToken: any }) {
       <br />
       <p>
         Hello, welcome to the 2FA project im made, if you dont have an account
-        yet, sign-up
+        yet, <Link to="/sign-up">sign-up</Link>
       </p>
       <form id="loginForm">
         <label htmlFor="email">Enter Your Email: </label>

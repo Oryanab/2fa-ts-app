@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
   let navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function SignUp() {
       <br />
       <p>
         Hello, welcome to the 2FA project im made, if you have an account ,
-        Login
+        <Link to="/">Login</Link>
       </p>
       <form id="signupForm">
         <label htmlFor="username">Enter Your Username: </label>
@@ -41,7 +42,15 @@ export default function SignUp() {
         <label htmlFor="password">Enter Your password: </label>
         <input type="text" name="password" />
         <br />
-        <button type="submit">submit</button>
+        <button
+          onClick={(event) => {
+            event.preventDefault();
+            userSignUp();
+          }}
+          type="submit"
+        >
+          submit
+        </button>
       </form>
     </div>
   );

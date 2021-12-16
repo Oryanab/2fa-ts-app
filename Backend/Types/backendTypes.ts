@@ -5,6 +5,8 @@ export interface UserItem {
   twoFactorAuth: Boolean;
 }
 
+export type UserItemGet = Omit<UserItem, "passwordHash" | "email">;
+
 export interface RequestsUserItem {
   username: String;
   twoFactorAuth: Boolean;

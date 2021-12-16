@@ -9,15 +9,26 @@ import { getCookie } from "./Helpers/helper";
 function App() {
   const [hasToken, setHasToken] = useState("");
 
+  window.addEventListener("load", () => {
+    try {
+      setHasToken(getCookie("token"));
+    } catch (err) {
+      setHasToken("");
+    }
+  });
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/sign-up" element={<SignUp />} />
         {hasToken.length > 0 && <Route path="/" element={<Dashboard />} />}
         {hasToken.length === 0 && (
           <Route path="/" element={<Login setHasToken={setHasToken} />} />
         )}
-        <Route path="/auth" element={<TwoFactorAuth />} />
+        <Route
+          path="/auth"
+          element={<TwoFactorAuth setHasToken={setHasToken} />}
+        />
       </Routes>
     </BrowserRouter>
   );
