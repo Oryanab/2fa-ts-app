@@ -37,3 +37,11 @@ Content-Type: application/json
     "username": "test",
     "code": "855606"
 }
+
+###
+POST http://localhost:3001/users/verify
+Content-Type: application/json
+
+{
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2Mzk2MTU3MTUsImV4cCI6MTYzOTYxNjMxNX0.ZnfJI8S12E6cb_JOPNbRjs1UJZQhL3Te1tCcAXdhiBg"
+}

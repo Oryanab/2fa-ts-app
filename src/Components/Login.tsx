@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { handleLocalStorage } from "../Helpers/helper";
 import { returnedLogin } from "../Types/types";
 
-export default function Login() {
+export default function Login({ setHasToken }: { setHasToken: any }) {
   const userLogin = () => {
     const form: HTMLFormElement = document.querySelector("#loginForm")!;
     const formData = new FormData(form);
@@ -18,6 +18,7 @@ export default function Login() {
       .then((response) => response.json())
       .then((data) => {
         handleLocalStorage(data.token);
+        setHasToken(data.token);
       })
       .catch((error) => {
         console.error("Error:", error);

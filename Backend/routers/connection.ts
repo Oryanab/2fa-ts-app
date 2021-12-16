@@ -64,23 +64,18 @@ connectionRouter.post("/login", validateUserExist, async (_req, res) => {
     );
     if (passwordValidate) {
       const accessToken = jwt.sign(
-        { email: _req.body.email, password: _req.body.password },
+        { email: _req.body.email, username: currentUser.username },
         process.env.SECRET!,
         {
           expiresIn: "10m",
         }
       );
       if (currentUser.twoFactorAuth) {
-        const { secret, uri, qr } = ganerateNewSecret(currentUser.username);
-        await User.update(
-          { _id: currentUser["_id"] },
-          { $set: { secret: secret } }
-        );
         const returnUserJson: RequestsUserItem = {
           username: currentUser.username,
           twoFactorAuth: currentUser.twoFactorAuth,
           token: accessToken,
-          qr: qr,
+          qr: currentUser.qr,
         };
         res.status(200).json(returnUserJson);
       } else {
@@ -104,6 +99,14 @@ connectionRouter.patch("/two-factor-auth/:username", async (_req, res) => {
       { username: _req.params.username },
       [{ $set: { twoFactorAuth: { $not: "$twoFactorAuth" } } }]
     );
+    if (!currentUser.twoFactorAuth === true) {
+      const { secret, uri, qr } = ganerateNewSecret(currentUser.username);
+      await User.update(
+        { _id: currentUser["_id"] },
+        { $set: { secret: secret } }
+      );
+      await User.update({ _id: currentUser["_id"] }, { $set: { qr: qr } });
+    }
     res.status(200).json({
       message: "success twoFactorAuth: " + !currentUser.twoFactorAuth,
     });
@@ -131,12 +134,12 @@ connectionRouter.post("/reset", async (_req, res) => {
   res.status(204).end();
 });
 
-connectionRouter.post("/verify", (_req, res) => {
+connectionRouter.post("/verify", async (_req, res) => {
   try {
-    const currentUser = jwt.verify(_req.body.token, process.env.SECRET!);
-    res.status(200).json(currentUser);
+    const verifiedUser = jwt.verify(_req.body.token, process.env.SECRET!);
+    res.status(200).json(verifiedUser);
   } catch (err) {
-    // err
+    res.status(403).json({ message: "invalid token" });
   }
 });
 

@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: String,
   twoFactorAuth: { type: Boolean },
   secret: { type: String },
+  qr: { type: String },
 });
 
 userSchema.plugin(uniqueValidator);
