@@ -61,7 +61,7 @@ export default function Dashboard() {
       <button
         onClick={(e) => {
           //e.preventDefault();
-          delete_cookie("token");
+          //delete_cookie("token");
           navigate("/");
         }}
         id="logout"
